@@ -1,7 +1,7 @@
 #ifndef LINEDOC_DOC_RANGE_HXX_SEEN
 #define LINEDOC_DOC_RANGE_HXX_SEEN
 
-#include "doc_line_point.hxx"
+#include "linedoc/doc_line_point.hxx"
 
 #include <string>
 

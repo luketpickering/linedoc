@@ -19,7 +19,16 @@ template <typename T> struct doc_line_ {
   size_t last_char() const {
     return is_empty() ? std::string::npos : (characters.size() - 1);
   }
+  T get_char(size_t character) const {
+    return is_EOL(character) ? '\n' : characters[character];
+  }
   size_t size() const { return characters.size(); }
+  doc_line_<T> subline(size_t i, size_t n = std::basic_string<T>::npos) const {
+    if (is_EOL(i)) {
+      return doc_line_<T>{fileID, file_line_no, ""};
+    }
+    return doc_line_<T>{fileID, file_line_no, characters.substr(i, n)};
+  }
 };
 
 typedef doc_line_<char> doc_line;

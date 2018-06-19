@@ -44,6 +44,12 @@ public:
                               std::basic_string<T>::npos};
   }
   static doc_line_point_<T> begin() { return doc_line_point_<T>{0, 0}; }
+
+  doc_line_point_<T> get_EOL() {
+    return doc_line_point_<T>{line_no, std::basic_string<T>::npos};
+  }
+
+  bool is_EOL() { return (character == std::basic_string<T>::npos); }
 };
 
 template <typename T>
