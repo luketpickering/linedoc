@@ -54,5 +54,8 @@ if(DOTEST)
 
 endif()
 
-  file(GLOB HEADERS linedoc/*.hxx)
-  install(PROGRAMS ${HEADERS} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/linedoc)
+file(GLOB HEADERS linedoc/*.hxx)
+install(PROGRAMS ${HEADERS} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/linedoc)
+
+add_executable(dump-doc dump-doc.cxx)
+install(TARGETS dump-doc DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)

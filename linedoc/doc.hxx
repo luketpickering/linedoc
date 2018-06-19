@@ -1,18 +1,23 @@
 #ifndef LINEDOC_DOC_HXX_SEEN
 #define LINEDOC_DOC_HXX_SEEN
 
+#ifndef LINEDOC_PRIVATE
+#define LINEDOC_PRIVATE private
+#endif
+
 #include "linedoc/doc_line.hxx"
 #include "linedoc/doc_line_point.hxx"
 #include "linedoc/doc_range.hxx"
 
 #include <map>
+#include <sstream>
 #include <string>
 #include <vector>
 
 namespace linedoc {
 
 template <typename T> class doc_ : private std::vector<doc_line_<T>> {
-private:
+LINEDOC_PRIVATE:
   std::vector<std::basic_string<T>> filenames;
   /// Check whether line_no or character valid, update to special values if not.
 
@@ -135,8 +140,10 @@ public:
   inline std::basic_string<T> substr(doc_range_<T> rng) const;
 
   inline std::basic_string<T> get_line(doc_line_point_<T>) const;
+  inline std::basic_string<T> get_line(size_t) const;
 
   inline std::basic_string<T> get_line_info(doc_line_point_<T>) const;
+  inline std::basic_string<T> get_line_info(size_t) const;
 
   inline void insert(doc_<T> const &, size_t line = 0);
   inline void insert(doc_<T> &&, size_t line = 0);
@@ -653,30 +660,37 @@ std::basic_string<T> doc_<T>::substr(doc_range_<T> rng) const {
 template <typename T>
 std::basic_string<T> doc_<T>::get_line(doc_line_point_<T> lp) const {
   lp = validate_line_point(lp);
-  if (is_end(lp)) {
+  if (lp.line_no == std::numeric_limits<size_t>::max()) {
     std::basic_stringstream<T> ss("");
     ss << EOF;
     return ss.str();
   }
   return std::vector<doc_line_<T>>::at(lp.line_no).characters;
 }
+template <typename T>
+std::basic_string<T> doc_<T>::get_line(size_t ln_it) const {
+  return get_line(doc_line_point_<T>{ln_it, 0});
+}
 
 template <typename T>
 std::basic_string<T> doc_<T>::get_line_info(doc_line_point_<T> lp) const {
   lp = validate_line_point(lp);
   std::basic_stringstream<T> ss("");
-  if (is_end(lp)) {
+  if (lp.line_no == std::numeric_limits<size_t>::max()) {
     ss << "EOF";
     return ss.str();
   }
-  if (filenames.find(std::vector<doc_line_<T>>::at(lp.line_no).fileID) ==
-      filenames.end()) {
+  if (std::vector<doc_line_<T>>::at(lp.line_no).fileID >= filenames.size()) {
     ss << "UNKNOWN FILE";
     return ss.str();
   }
   ss << filenames.at(std::vector<doc_line_<T>>::at(lp.line_no).fileID) << ":"
      << std::vector<doc_line_<T>>::at(lp.line_no).file_line_no;
   return ss.str();
+}
+template <typename T>
+std::basic_string<T> doc_<T>::get_line_info(size_t ln_it) const {
+  return get_line_info(doc_line_point_<T>{ln_it, 0});
 }
 
 template <typename T> void doc_<T>::insert(doc_<T> const &doc, size_t line) {
