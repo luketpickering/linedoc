@@ -305,7 +305,8 @@ template <typename T> void doc_<T>::tidy_filenames() {
     fnusage.at(line.fileID)++;
   }
 
-    std::map<size_t, size_t> fnshuffle = {{std::basic_string<T>::npos,std::basic_string<T>::npos}};
+  std::map<size_t, size_t> fnshuffle = {
+      {std::basic_string<T>::npos, std::basic_string<T>::npos}};
   std::vector<std::basic_string<T>> filenames_new;
 
   for (size_t fn_it = 0; fn_it < filenames.size(); ++fn_it) {
@@ -587,8 +588,10 @@ doc_<T> doc_<T>::subdoc(doc_line_point_<T> start,
   new_doc.filenames = filenames;
 
   if (ptr.character) {
+    size_t n = (ptr.line_no == end.line_no) ? (end.character - ptr.character)
+                                            : std::basic_string<T>::npos;
     new_doc.std::vector<doc_line_<T>>::push_back(
-        std::vector<doc_line_<T>>::at(ptr.line_no).subline(ptr.character));
+        std::vector<doc_line_<T>>::at(ptr.line_no).subline(ptr.character, n));
     ptr = advance_line(ptr);
   }
 
@@ -625,8 +628,10 @@ std::basic_string<T> doc_<T>::substr(doc_line_point_<T> begin,
   std::basic_stringstream<T> ss("");
   bool char_added = false;
   if (ptr.character) {
+    size_t n = (ptr.line_no == end.line_no) ? (end.character - ptr.character)
+                                            : std::basic_string<T>::npos;
     ss << std::vector<doc_line_<T>>::at(ptr.line_no)
-              .subline(ptr.character)
+              .subline(ptr.character, n)
               .characters;
     char_added = true;
     ptr = advance_line(ptr);
@@ -714,7 +719,8 @@ std::basic_string<T> doc_<T>::get_line_info(size_t ln_it) const {
 }
 
 template <typename T> void doc_<T>::insert(doc_<T> const &docu, size_t line) {
-  std::map<size_t, size_t> fnshuffle = {{std::basic_string<T>::npos,std::basic_string<T>::npos}};
+  std::map<size_t, size_t> fnshuffle = {
+      {std::basic_string<T>::npos, std::basic_string<T>::npos}};
   for (size_t fn_it = 0; fn_it < docu.filenames.size(); ++fn_it) {
     fnshuffle[fn_it] = get_filename_id(docu.filenames[fn_it]);
   }
@@ -728,7 +734,8 @@ template <typename T> void doc_<T>::insert(doc_<T> const &docu, size_t line) {
 }
 
 template <typename T> void doc_<T>::insert(doc_<T> &&docu, size_t line) {
-  std::map<size_t, size_t> fnshuffle = {{std::basic_string<T>::npos,std::basic_string<T>::npos}};
+  std::map<size_t, size_t> fnshuffle = {
+      {std::basic_string<T>::npos, std::basic_string<T>::npos}};
   for (size_t fn_it = 0; fn_it < docu.filenames.size(); ++fn_it) {
     fnshuffle[fn_it] = get_filename_id(docu.filenames[fn_it]);
   }

@@ -328,45 +328,61 @@ int main() {
     std::cout << "[PASSED] 6/6 find_last_not_of tests." << std::endl;
   } // END find_last_not_of
   { // START substr
-    std::string str1 = test.substr(test.begin(),test.begin().get_EOL());
-    std::string str2 = test.substr(test.begin(),doc_line_point{1, 0});
-    std::string str3 = test.substr(test.begin(),test.end());
+    doc test;
+    test.push_back("a");
+    test.push_back("b");
+    test.push_back("c");
+    std::string str1 = test.substr(test.begin(), test.begin().get_EOL());
+    std::string str2 = test.substr(test.begin(), doc_line_point{1, 0});
+    std::string str3 = test.substr(test.begin(), test.end());
     std::string str4 = test.substr(test.end(), test.begin());
-    std::string str5 = test.substr(test.begin(),test.begin());
+    std::string str5 = test.substr(test.begin(), test.begin());
 
-    operator_assert(str1,==,"a");
-    operator_assert(str2,==,"a ");
-    operator_assert(str3,==,"a b c");
-    operator_assert(str4,==,"");
-    operator_assert(str5,==,"");
-    std::cout << "[PASSED] 5/5 substr tests." << std::endl;
-  } // END substr
-  { // START substr
-    doc sub_doc1 = test.subdoc(test.begin(),test.begin().get_EOL());
-    doc sub_doc2 = test.subdoc(test.begin(),doc_line_point{1, 0});
-    doc sub_doc3 = test.subdoc(test.begin(),test.begin());
-    doc sub_doc4 = test.subdoc(test.begin(),doc_line_point{2, 0});
+    test.push_back("def");
+    std::string str6 = test.substr(doc_line_point{3, 1}, doc_line_point{3, 2});
 
-    operator_assert(sub_doc1.substr(),==,"a");
-    operator_assert(sub_doc2.substr(),==,"a ");
-    operator_assert(sub_doc3.substr(),==,"");
-    operator_assert(sub_doc4.substr(),==,"a b ");
-    std::cout << "[PASSED] 4/4 subdoc tests." << std::endl;
+    operator_assert(str1, ==, "a");
+    operator_assert(str2, ==, "a ");
+    operator_assert(str3, ==, "a b c");
+    operator_assert(str4, ==, "");
+    operator_assert(str5, ==, "");
+    operator_assert(str6, ==, "e");
+    std::cout << "[PASSED] 6/6 substr tests." << std::endl;
   } // END substr
+  { // START subdoc
+    doc test;
+    test.push_back("a");
+    test.push_back("b");
+    test.push_back("c");
+    doc sub_doc1 = test.subdoc(test.begin(), test.begin().get_EOL());
+    doc sub_doc2 = test.subdoc(test.begin(), doc_line_point{1, 0});
+    doc sub_doc3 = test.subdoc(test.begin(), test.begin());
+    doc sub_doc4 = test.subdoc(test.begin(), doc_line_point{2, 0});
+
+    test.push_back("def");
+    doc sub_doc5 = test.subdoc(doc_line_point{3, 1}, doc_line_point{3, 2});
+
+    operator_assert(sub_doc1.substr(), ==, "a");
+    operator_assert(sub_doc2.substr(), ==, "a ");
+    operator_assert(sub_doc3.substr(), ==, "");
+    operator_assert(sub_doc4.substr(), ==, "a b ");
+    operator_assert(sub_doc5.substr(), ==, "e");
+    std::cout << "[PASSED] 5/5 subdoc tests." << std::endl;
+  } // END subdoc
   { // START insert
     doc itest;
     itest.insert(test);
-    operator_assert(itest.n_lines(),==,3);
+    operator_assert(itest.n_lines(), ==, 3);
     doc itestmv;
     itestmv.insert(std::move(itest));
-    operator_assert(itestmv.n_lines(),==,3);
+    operator_assert(itestmv.n_lines(), ==, 3);
     std::cout << "[PASSED] 2/2 insert tests." << std::endl;
   } // END insert
-    { // START remove_line
-      doc itest;
-      itest.insert(test);
-      itest.remove_line(0);
-      operator_assert(itest.n_lines(),==,2);
-      std::cout << "[PASSED] 1/1 remove_line tests." << std::endl;
-    } // END remove_line
+  { // START remove_line
+    doc itest;
+    itest.insert(test);
+    itest.remove_line(0);
+    operator_assert(itest.n_lines(), ==, 2);
+    std::cout << "[PASSED] 1/1 remove_line tests." << std::endl;
+  } // END remove_line
 }
