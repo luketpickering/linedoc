@@ -16,7 +16,7 @@
 
 namespace linedoc {
 
-template <typename T> class doc_ : private std::vector<doc_line_<T>> {
+template <typename T> class doc_ : LINEDOC_PROTECTED std::vector<doc_line_<T>> {
   LINEDOC_PROTECTED : std::vector<std::basic_string<T>> filenames;
   /// Check whether line_no or character valid, update to special values if not.
 
