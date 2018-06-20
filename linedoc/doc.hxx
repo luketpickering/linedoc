@@ -1,8 +1,8 @@
 #ifndef LINEDOC_DOC_HXX_SEEN
 #define LINEDOC_DOC_HXX_SEEN
 
-#ifndef LINEDOC_PRIVATE
-#define LINEDOC_PRIVATE private
+#ifndef LINEDOC_PROTECTED
+#define LINEDOC_PROTECTED protected
 #endif
 
 #include "linedoc/doc_line.hxx"
@@ -17,8 +17,7 @@
 namespace linedoc {
 
 template <typename T> class doc_ : private std::vector<doc_line_<T>> {
-LINEDOC_PRIVATE:
-  std::vector<std::basic_string<T>> filenames;
+  LINEDOC_PROTECTED : std::vector<std::basic_string<T>> filenames;
   /// Check whether line_no or character valid, update to special values if not.
 
   inline doc_line_point_<T> validate_line_point(doc_line_point_<T>) const;
@@ -54,13 +53,12 @@ LINEDOC_PRIVATE:
 
   inline size_t get_filename_id(std::basic_string<T> const &filename = "");
 
-  inline T get_char(doc_line_point_<T>) const;
-
   void tidy_filenames();
 
 public:
-  /// First character of the document
+  inline T get_char(doc_line_point_<T>) const;
 
+  /// First character of the document
   inline doc_line_point_<T> begin() const;
   /// Last character of the document
   inline doc_line_point_<T> end() const;
@@ -139,7 +137,8 @@ public:
          doc_line_point_<T> end = doc_line_point_<T>::end()) const;
   inline std::basic_string<T> substr(doc_range_<T> rng) const;
 
-  inline std::basic_string<T> get_line(doc_line_point_<T>) const;
+  inline std::basic_string<T> get_line(doc_line_point_<T>,
+                                       bool highlight = true) const;
   inline std::basic_string<T> get_line(size_t) const;
 
   inline std::basic_string<T> get_line_info(doc_line_point_<T>) const;
@@ -149,6 +148,7 @@ public:
   inline void insert(doc_<T> &&, size_t line = 0);
 
   inline void remove_line(doc_line_point_<T>);
+  inline void remove_line(size_t line_no);
 
   inline void push_back(std::basic_string<T> const &line,
                         std::basic_string<T> const &filename = "",
@@ -658,15 +658,35 @@ std::basic_string<T> doc_<T>::substr(doc_range_<T> rng) const {
 }
 
 template <typename T>
-std::basic_string<T> doc_<T>::get_line(doc_line_point_<T> lp) const {
+std::basic_string<T> doc_<T>::get_line(doc_line_point_<T> lp,
+                                       bool highlight) const {
   lp = validate_line_point(lp);
   if (lp.line_no == std::numeric_limits<size_t>::max()) {
     std::basic_stringstream<T> ss("");
     ss << EOF;
     return ss.str();
   }
-  return std::vector<doc_line_<T>>::at(lp.line_no).characters;
+  if (!highlight) {
+    return std::vector<doc_line_<T>>::at(lp.line_no).characters;
+  }
+  std::stringstream ss("");
+  std::basic_string<T> ln =
+      std::vector<doc_line_<T>>::at(lp.line_no).characters;
+  for (size_t i = 0; i < ln.size(); ++i) {
+    if (i == lp.character) {
+      ss << "\033[31;47m";
+    }
+    ss << ln[i];
+    if (i == lp.character) {
+      ss << "\033[0m";
+    }
+  }
+  if (lp.is_EOL()) {
+    ss << "\033[31;47m\\EOL\033[0m";
+  }
+  return ss.str();
 }
+
 template <typename T>
 std::basic_string<T> doc_<T>::get_line(size_t ln_it) const {
   return get_line(doc_line_point_<T>{ln_it, 0});
@@ -723,10 +743,13 @@ template <typename T> void doc_<T>::insert(doc_<T> &&doc, size_t line) {
 
 template <typename T> void doc_<T>::remove_line(doc_line_point_<T> lp) {
   lp = validate_line_point(lp);
-  if (is_end(lp)) {
+  if (lp.line_no == std::numeric_limits<size_t>::max()) {
     return;
   }
   std::vector<doc_line_<T>>::erase(lp.line_no);
+}
+template <typename T> void doc_<T>::remove_line(size_t line_no) {
+  remove_line(doc_line_point_<T>{line_no, 0});
 }
 
 template <typename T>

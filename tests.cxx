@@ -1,6 +1,6 @@
-#define LINEDOC_PRIVATE public
+#define LINEDOC_PROTECTED public
 #include "linedoc/doc.hxx"
-#undef LINEDOC_PRIVATE
+#undef LINEDOC_PROTECTED
 
 #include <cassert>
 #include <iomanip>
