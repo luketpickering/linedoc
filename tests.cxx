@@ -353,4 +353,13 @@ int main() {
     operator_assert(sub_doc4.substr(),==,"a b ");
     std::cout << "[PASSED] 4/4 subdoc tests." << std::endl;
   } // END substr
+  { // START insert
+    doc itest;
+    itest.insert(test);
+    operator_assert(itest.n_lines(),==,3);
+    doc itestmv;
+    itestmv.insert(std::move(itest));
+    operator_assert(itestmv.n_lines(),==,3);
+    std::cout << "[PASSED] 2/2 insert tests." << std::endl;
+  } // END insert
 }

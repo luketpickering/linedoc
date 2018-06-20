@@ -305,7 +305,7 @@ template <typename T> void doc_<T>::tidy_filenames() {
     fnusage.at(line.fileID)++;
   }
 
-  std::map<size_t, size_t> fnshuffle;
+    std::map<size_t, size_t> fnshuffle = {{std::basic_string<T>::npos,std::basic_string<T>::npos}};
   std::vector<std::basic_string<T>> filenames_new;
 
   for (size_t fn_it = 0; fn_it < filenames.size(); ++fn_it) {
@@ -713,27 +713,28 @@ std::basic_string<T> doc_<T>::get_line_info(size_t ln_it) const {
   return get_line_info(doc_line_point_<T>{ln_it, 0});
 }
 
-template <typename T> void doc_<T>::insert(doc_<T> const &doc, size_t line) {
-  std::map<size_t, size_t> fnshuffle;
-  for (size_t fn_it = 0; fn_it = doc.filenames.size(); ++fn_it) {
-    fnshuffle[fn_it] = get_filename_id(doc.filenames[fn_it]);
+template <typename T> void doc_<T>::insert(doc_<T> const &docu, size_t line) {
+  std::map<size_t, size_t> fnshuffle = {{std::basic_string<T>::npos,std::basic_string<T>::npos}};
+  for (size_t fn_it = 0; fn_it < docu.filenames.size(); ++fn_it) {
+    fnshuffle[fn_it] = get_filename_id(docu.filenames[fn_it]);
   }
 
-  for (size_t ln_it = 0; ln_it < doc.size(); ++ln_it) {
+  for (size_t ln_it = 0; ln_it < docu.size(); ++ln_it) {
     std::vector<doc_line_<T>>::insert(
         std::vector<doc_line_<T>>::begin() + (line++),
-        doc_line_<T>{fnshuffle.at(doc[ln_it].fileID), doc[ln_it].file_line_no,
-                     doc[ln_it].characters});
+        doc_line_<T>{fnshuffle.at(docu[ln_it].fileID), docu[ln_it].file_line_no,
+                     docu[ln_it].characters});
   }
 }
 
-template <typename T> void doc_<T>::insert(doc_<T> &&doc, size_t line) {
-  std::map<size_t, size_t> fnshuffle;
-  for (size_t fn_it = 0; fn_it < doc.filenames.size(); ++fn_it) {
-    fnshuffle[fn_it] = get_filename_id(doc.filenames[fn_it]);
+template <typename T> void doc_<T>::insert(doc_<T> &&docu, size_t line) {
+  std::map<size_t, size_t> fnshuffle = {{std::basic_string<T>::npos,std::basic_string<T>::npos}};
+  for (size_t fn_it = 0; fn_it < docu.filenames.size(); ++fn_it) {
+    fnshuffle[fn_it] = get_filename_id(docu.filenames[fn_it]);
   }
 
-  for (doc_line_<T> &&ln : doc) {
+  for (size_t ln_it = 0; ln_it < docu.size(); ++ln_it) {
+    doc_line_<T> &ln = docu.std::vector<doc_line_<T>>::at(ln_it);
     ln.fileID = fnshuffle.at(ln.fileID);
 
     std::vector<doc_line_<T>>::insert(
