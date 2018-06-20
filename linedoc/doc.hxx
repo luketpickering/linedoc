@@ -17,45 +17,44 @@
 namespace linedoc {
 
 template <typename T> class doc_ : LINEDOC_PROTECTED std::vector<doc_line_<T>> {
-  LINEDOC_PROTECTED : std::vector<std::basic_string<T>> filenames;
-  /// Check whether line_no or character valid, update to special values if not.
+  LINEDOC_PROTECTED:
 
+  std::vector<std::basic_string<T>> filenames;
+
+  /// Check whether line_no or character valid, update to special values if not.
   inline doc_line_point_<T> validate_line_point(doc_line_point_<T>) const;
 
-  /// Move to the next character
-  ///
-  ///\note newline counts as a character
-  ///
-  ///\note If n = 0, do nothing.
-
-  inline doc_line_point_<T> advance(doc_line_point_<T>, size_t n = 1) const;
   /// Move to the beginning of the line n lines after this.
   ///
   ///\note If n = 0, do nothing.
-
   inline doc_line_point_<T> advance_line(doc_line_point_<T>,
                                          size_t n = 1) const;
-
-  /// Move to the previous character
-  ///
-  ///\note newline counts as a character
-  ///
-  ///\note If n = 0, do nothing.
-
-  inline doc_line_point_<T> rewind(doc_line_point_<T>, size_t n = 1) const;
   /// Move to the end of the previous line
   ///
   ///\note If n = 0, do nothing.
-
   inline doc_line_point_<T> rewind_line(doc_line_point_<T>, size_t n = 1) const;
-
-  inline bool line_is_empty(doc_line_point_<T>) const;
 
   inline size_t get_filename_id(std::basic_string<T> const &filename = "");
 
   void tidy_filenames();
 
 public:
+  /// Move to the next character
+  ///
+  ///\note newline counts as a character
+  ///
+  ///\note If n = 0, do nothing.
+  inline doc_line_point_<T> advance(doc_line_point_<T>, size_t n = 1) const;
+
+  /// Move to the previous character
+  ///
+  ///\note newline counts as a character
+  ///
+  ///\note If n = 0, do nothing.
+  inline doc_line_point_<T> rewind(doc_line_point_<T>, size_t n = 1) const;
+
+  inline bool line_is_empty(doc_line_point_<T>) const;
+
   inline T get_char(doc_line_point_<T>) const;
 
   /// First character of the document
