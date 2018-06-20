@@ -24,16 +24,6 @@ template <typename T> class doc_ : LINEDOC_PROTECTED std::vector<doc_line_<T>> {
   /// Check whether line_no or character valid, update to special values if not.
   inline doc_line_point_<T> validate_line_point(doc_line_point_<T>) const;
 
-  /// Move to the beginning of the line n lines after this.
-  ///
-  ///\note If n = 0, do nothing.
-  inline doc_line_point_<T> advance_line(doc_line_point_<T>,
-                                         size_t n = 1) const;
-  /// Move to the end of the previous line
-  ///
-  ///\note If n = 0, do nothing.
-  inline doc_line_point_<T> rewind_line(doc_line_point_<T>, size_t n = 1) const;
-
   inline size_t get_filename_id(std::basic_string<T> const &filename = "");
 
   void tidy_filenames();
@@ -52,6 +42,17 @@ public:
   ///
   ///\note If n = 0, do nothing.
   inline doc_line_point_<T> rewind(doc_line_point_<T>, size_t n = 1) const;
+
+  /// Move to the beginning of the line n lines after this.
+  ///
+  ///\note If n = 0, do nothing.
+  inline doc_line_point_<T> advance_line(doc_line_point_<T>,
+                                         size_t n = 1) const;
+  /// Move to the end of the previous line
+  ///
+  ///\note If n = 0, do nothing.
+  inline doc_line_point_<T> rewind_line(doc_line_point_<T>, size_t n = 1) const;
+
 
   inline bool line_is_empty(doc_line_point_<T>) const;
 
