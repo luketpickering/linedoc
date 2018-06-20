@@ -17,9 +17,10 @@
 namespace linedoc {
 
 template <typename T> class doc_ : LINEDOC_PROTECTED std::vector<doc_line_<T>> {
-  LINEDOC_PROTECTED:
+  LINEDOC_PROTECTED :
 
-  std::vector<std::basic_string<T>> filenames;
+      std::vector<std::basic_string<T>>
+          filenames;
 
   /// Check whether line_no or character valid, update to special values if not.
   inline doc_line_point_<T> validate_line_point(doc_line_point_<T>) const;
@@ -52,7 +53,6 @@ public:
   ///
   ///\note If n = 0, do nothing.
   inline doc_line_point_<T> rewind_line(doc_line_point_<T>, size_t n = 1) const;
-
 
   inline bool line_is_empty(doc_line_point_<T>) const;
 
@@ -729,7 +729,7 @@ template <typename T> void doc_<T>::insert(doc_<T> const &doc, size_t line) {
 
 template <typename T> void doc_<T>::insert(doc_<T> &&doc, size_t line) {
   std::map<size_t, size_t> fnshuffle;
-  for (size_t fn_it = 0; fn_it = doc.filenames.size(); ++fn_it) {
+  for (size_t fn_it = 0; fn_it < doc.filenames.size(); ++fn_it) {
     fnshuffle[fn_it] = get_filename_id(doc.filenames[fn_it]);
   }
 
@@ -746,7 +746,8 @@ template <typename T> void doc_<T>::remove_line(doc_line_point_<T> lp) {
   if (lp.line_no == std::numeric_limits<size_t>::max()) {
     return;
   }
-  std::vector<doc_line_<T>>::erase(lp.line_no);
+  std::vector<doc_line_<T>>::erase(std::vector<doc_line_<T>>::begin() +
+                                   lp.line_no);
 }
 template <typename T> void doc_<T>::remove_line(size_t line_no) {
   remove_line(doc_line_point_<T>{line_no, 0});
