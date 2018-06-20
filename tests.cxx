@@ -362,4 +362,11 @@ int main() {
     operator_assert(itestmv.n_lines(),==,3);
     std::cout << "[PASSED] 2/2 insert tests." << std::endl;
   } // END insert
+    { // START remove_line
+      doc itest;
+      itest.insert(test);
+      itest.remove_line(0);
+      operator_assert(itest.n_lines(),==,2);
+      std::cout << "[PASSED] 1/1 remove_line tests." << std::endl;
+    } // END remove_line
 }
