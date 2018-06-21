@@ -408,6 +408,7 @@ doc_line_point_<T> doc_<T>::find_first_of(std::basic_string<T> const &chars,
                                           doc_line_point_<T> end) const {
   // As EOL characters are implicit, have to treat them somewhat specially.
   bool isEOL = (chars.find('\n') != std::basic_string<T>::npos);
+  bool isOnlyEOL = isEOL && (chars.size() == 1);
 
   doc_line_point_<T> search = validate_line_point(start);
   end = validate_line_point(end);
@@ -435,7 +436,7 @@ doc_line_point_<T> doc_<T>::find_first_of(std::basic_string<T> const &chars,
     return doc_<T>::end();
   }
 
-  if (isEOL && !search.is_EOL()) {
+  if (isOnlyEOL && !search.is_EOL()) {
     return doc_<T>::end();
   }
   if (chars.find(get_char(search)) == std::basic_string<T>::npos) {
@@ -458,6 +459,7 @@ doc_line_point_<T> doc_<T>::find_first_not_of(std::basic_string<T> const &chars,
                                               doc_line_point_<T> end) const {
   // As EOL characters are implicit, have to treat them somewhat specially.
   bool isEOL = (chars.find('\n') != std::basic_string<T>::npos);
+  bool isOnlyEOL = isEOL && (chars.size() == 1);
 
   doc_line_point_<T> search = validate_line_point(start);
   end = validate_line_point(end);
@@ -481,7 +483,7 @@ doc_line_point_<T> doc_<T>::find_first_not_of(std::basic_string<T> const &chars,
     return doc_<T>::end();
   }
 
-  if (isEOL && search.is_EOL()) {
+  if (isOnlyEOL && search.is_EOL()) {
     return doc_<T>::end();
   }
   if (chars.find(get_char(search)) != std::basic_string<T>::npos) {
@@ -503,6 +505,7 @@ doc_line_point_<T> doc_<T>::find_last_of(std::basic_string<T> const &chars,
                                          doc_line_point_<T> end) const {
   // As EOL characters are implicit, have to treat them somewhat specially.
   bool isEOL = (chars.find('\n') != std::basic_string<T>::npos);
+  bool isOnlyEOL = isEOL && (chars.size() == 1);
 
   doc_line_point_<T> search = rewind(end);
   start = validate_line_point(start);
@@ -533,7 +536,7 @@ doc_line_point_<T> doc_<T>::find_last_of(std::basic_string<T> const &chars,
     return doc_<T>::end();
   }
 
-  if (isEOL && !search.is_EOL()) {
+  if (isOnlyEOL && !search.is_EOL()) {
     return doc_<T>::end();
   }
   if (chars.find(get_char(search)) == std::basic_string<T>::npos) {
@@ -555,6 +558,7 @@ doc_line_point_<T> doc_<T>::find_last_not_of(std::basic_string<T> const &chars,
                                              doc_line_point_<T> end) const {
   // As EOL characters are implicit, have to treat them somewhat specially.
   bool isEOL = (chars.find('\n') != std::basic_string<T>::npos);
+  bool isOnlyEOL = isEOL && (chars.size() == 1);
 
   doc_line_point_<T> search = rewind(end);
   start = validate_line_point(start);
@@ -585,7 +589,7 @@ doc_line_point_<T> doc_<T>::find_last_not_of(std::basic_string<T> const &chars,
     return doc_<T>::end();
   }
 
-  if (isEOL && search.is_EOL()) {
+  if (isOnlyEOL && search.is_EOL()) {
     return doc_<T>::end();
   }
 

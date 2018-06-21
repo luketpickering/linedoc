@@ -227,6 +227,7 @@ int main() {
     doc_line_point next_nl = test.find_first_of("\n", begin, test.end());
     doc_line_point next_nl_same_line =
         test.find_first_of("\n", begin.get_EOL(), test.end());
+    doc_line_point next_aNL = test.find_first_of("a\n", begin, test.end());
     doc_line_point next_b = test.find_first_of("b", begin, test.end());
     doc_line_point next_b_same_line =
         test.find_first_of("b", begin, begin.get_EOL());
@@ -241,6 +242,7 @@ int main() {
     assert_are_equiv(test, next_a, (doc_line_point{0, 0}));
     assert_are_equiv(test, next_nl, (doc_line_point{0, 1}));
     assert_are_equiv(test, next_nl_same_line, (doc_line_point{0, 1}));
+    assert_are_equiv(test, next_aNL, (doc_line_point{0, 0}));
     assert_are_equiv(test, next_b, (doc_line_point{1, 0}));
     assert_are_equiv(test, next_b_same_line, test.end());
     assert_are_equiv(test, next_c, (doc_line_point{2, 0}));
