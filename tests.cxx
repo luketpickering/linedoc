@@ -11,8 +11,10 @@
     if (!(L OP R)) {                                                           \
       std::cout << "ASSERT(" << #L << " " << #OP << " " << #R ") failed on "   \
                 << __FILE__ << ":" << __LINE__ << std::endl                    \
-                << "  " << std::quoted(#L) << " = " << L << std::endl          \
-                << "  " << std::quoted(#R) << " = " << R << std::endl;         \
+                << "  " << std::quoted(#L) << " = \"" << L << "\""             \
+                << std::endl                                                   \
+                << "  " << std::quoted(#R) << " = \"" << R << "\""             \
+                << std::endl;                                                  \
     }                                                                          \
     assert((L OP R));                                                          \
   }
@@ -22,8 +24,10 @@
     if ((L OP R)) {                                                            \
       std::cout << "ASSERT(" << #L << " " << #OP << " " << #R ") failed on "   \
                 << __FILE__ << ":" << __LINE__ << std::endl                    \
-                << "  " << std::quoted(#L) << " = " << L << std::endl          \
-                << "  " << std::quoted(#R) << " = " << R << std::endl;         \
+                << "  " << std::quoted(#L) << " = \"" << L << "\""             \
+                << std::endl                                                   \
+                << "  " << std::quoted(#R) << " = \"" << R << "\""             \
+                << std::endl;                                                  \
     }                                                                          \
     assert(!(L OP R));                                                         \
   }
@@ -314,6 +318,8 @@ int main() {
     doc_line_point last_not_g = test.find_last_not_of("g", begin, test.end());
     doc_line_point last_not_f =
         test.find_last_not_of("f", begin, doc_line_point{3, 3});
+    doc_line_point last_not_f2 =
+        test.find_last_not_of("f", begin, doc_line_point{3, 1});
     doc_line_point last_not_nl =
         test.find_last_not_of("\n", begin, begin.get_EOL());
     doc_line_point last_not_nl2 =
@@ -323,9 +329,10 @@ int main() {
     assert_are_equiv(test, last_not_a2, test.end());
     assert_are_equiv(test, last_not_g, (doc_line_point{3, 4}));
     assert_are_equiv(test, last_not_f, (doc_line_point{3, 0}));
+    assert_are_equiv(test, last_not_f2, (doc_line_point{3, 0}));
     assert_are_equiv(test, last_not_nl, begin);
     assert_are_equiv(test, last_not_nl2, test.end());
-    std::cout << "[PASSED] 6/6 find_last_not_of tests." << std::endl;
+    std::cout << "[PASSED] 7/7 find_last_not_of tests." << std::endl;
   } // END find_last_not_of
   { // START substr
     doc test;
