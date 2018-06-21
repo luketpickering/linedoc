@@ -64,14 +64,16 @@ public:
   inline doc_line_point_<T> end() const;
 
   /// Whether two line_points are equivalent
-
   inline bool are_equivalent(doc_line_point_<T>, doc_line_point_<T>) const;
   /// Whether one line_point is earlier than another
 
   inline bool is_earlier(doc_line_point_<T>, doc_line_point_<T>) const;
-  /// Whether one line_point is later than another
 
+  /// Whether one line_point is later than another
   inline bool is_later(doc_line_point_<T>, doc_line_point_<T>) const;
+
+  /// Whether two line_points occur on equivalent lines.
+  inline bool same_line(doc_line_point_<T>, doc_line_point_<T>) const;
 
   /// Whether a line_point is equivalent to the beginning of the document.
   inline bool is_begin(doc_line_point_<T>) const;
@@ -343,6 +345,13 @@ bool doc_<T>::are_equivalent(doc_line_point_<T> l, doc_line_point_<T> r) const {
   l = validate_line_point(l);
   r = validate_line_point(r);
   return (l == r);
+}
+
+template <typename T>
+bool doc_<T>::same_line(doc_line_point_<T> l, doc_line_point_<T> r) const {
+  l = validate_line_point(l);
+  r = validate_line_point(r);
+  return (l.line_no == r.line_no);
 }
 
 template <typename T>
