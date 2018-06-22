@@ -637,7 +637,8 @@ doc_<T> doc_<T>::subdoc(doc_line_point_<T> start,
     ptr = advance_line(ptr);
   }
 
-  if (!is_later(ptr, end)) {
+  if (is_earlier(ptr, end) ||
+      (are_equivalent(ptr, end) && ((ptr.character == 0) || is_end(ptr)))) {
     new_doc.std::vector<doc_line_<T>>::push_back(
         std::vector<doc_line_<T>>::at(ptr.line_no).subline(0, end.character));
   }
@@ -682,7 +683,8 @@ std::basic_string<T> doc_<T>::substr(doc_line_point_<T> begin,
     ptr = advance_line(ptr);
   }
 
-  if (!is_later(ptr, end)) {
+  if (is_earlier(ptr, end) ||
+      (are_equivalent(ptr, end) && ((ptr.character == 0) || is_end(ptr)))) {
     if (char_added) {
       ss << " ";
     }
@@ -690,7 +692,6 @@ std::basic_string<T> doc_<T>::substr(doc_line_point_<T> begin,
               .subline(0, end.character)
               .characters;
   }
-
   return ss.str();
 }
 template <typename T>
