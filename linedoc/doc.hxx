@@ -624,10 +624,15 @@ doc_<T> doc_<T>::subdoc(doc_line_point_<T> start,
   new_doc.filenames = filenames;
 
   if (ptr.character) {
-    size_t n = (ptr.line_no == end.line_no) ? (end.character - ptr.character)
-                                            : std::basic_string<T>::npos;
+    if (ptr.line_no == end.line_no) {
+      new_doc.std::vector<doc_line_<T>>::push_back(
+          std::vector<doc_line_<T>>::at(ptr.line_no)
+              .subline(ptr.character, (end.character - ptr.character)));
+      new_doc.tidy_filenames();
+      return new_doc;
+    }
     new_doc.std::vector<doc_line_<T>>::push_back(
-        std::vector<doc_line_<T>>::at(ptr.line_no).subline(ptr.character, n));
+        std::vector<doc_line_<T>>::at(ptr.line_no).subline(ptr.character));
     ptr = advance_line(ptr);
   }
 
@@ -665,11 +670,15 @@ std::basic_string<T> doc_<T>::substr(doc_line_point_<T> begin,
   std::basic_stringstream<T> ss("");
   bool char_added = false;
   if (ptr.character) {
-    size_t n = (ptr.line_no == end.line_no) ? (end.character - ptr.character)
-                                            : std::basic_string<T>::npos;
+    if (ptr.line_no == end.line_no) {
+      return std::vector<doc_line_<T>>::at(ptr.line_no)
+          .subline(ptr.character, (end.character - ptr.character))
+          .characters;
+    }
     ss << std::vector<doc_line_<T>>::at(ptr.line_no)
-              .subline(ptr.character, n)
+              .subline(ptr.character)
               .characters;
+
     char_added = true;
     ptr = advance_line(ptr);
   }

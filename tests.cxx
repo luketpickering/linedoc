@@ -348,15 +348,17 @@ int main() {
     std::string str5 = test.substr(test.begin(), test.begin());
 
     test.push_back("def");
-    std::string str6 = test.substr(doc_line_point{3, 1}, doc_line_point{3, 2});
+    std::string str6 = test.substr(doc_line_point{3, 1}, doc_line_point{3, 4});
+    std::string str7 = test.substr(doc_line_point{3, 1});
 
     operator_assert(str1, ==, "a");
     operator_assert(str2, ==, "a ");
     operator_assert(str3, ==, "a b c");
     operator_assert(str4, ==, "");
     operator_assert(str5, ==, "");
-    operator_assert(str6, ==, "e");
-    std::cout << "[PASSED] 6/6 substr tests." << std::endl;
+    operator_assert(str6, ==, "ef");
+    operator_assert(str7, ==, "ef");
+    std::cout << "[PASSED] 7/7 substr tests." << std::endl;
   } // END substr
   { // START subdoc
     doc test;
