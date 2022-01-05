@@ -1,69 +1,36 @@
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 3.14)
 
 project(linedoc)
+set(linedoc_VERSION 0.9)
 
-#Changes default install path to be a subdirectory of the build dir.
-#Can set build dir at configure time with -DCMAKE_INSTALL_PREFIX=/install/path
-if(CMAKE_INSTALL_PREFIX STREQUAL "" OR CMAKE_INSTALL_PREFIX STREQUAL
-  "/usr/local")
-  SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/${CMAKE_SYSTEM_NAME}")
-elseif(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/${CMAKE_SYSTEM_NAME}")
+if(NOT DEFINED CMAKE_INSTALL_PREFIX OR 
+    "${CMAKE_INSTALL_PREFIX}x" STREQUAL "x" OR 
+    "${CMAKE_INSTALL_PREFIX}x" STREQUAL "/usr/localx")
+  set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/${CMAKE_SYSTEM_NAME}")
 endif()
-message(STATUS "Installing to: ${CMAKE_INSTALL_PREFIX}")
 
+if(NOT DEFINED CMAKE_BUILD_TYPE OR 
+    "${CMAKE_BUILD_TYPE}x" STREQUAL "x")
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+
+set(CMAKE_CXX_STANDARD 14)
 
 if(NOT DEFINED DOTEST)
   SET(DOTEST FALSE)
 endif()
 
-if(NOT DEFINED DOCOV)
-  SET(DOCOV FALSE)
-endif()
-
 if(DOTEST)
   enable_testing()
-  if(NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
-    set(CMAKE_BUILD_TYPE Debug)
-  endif()
 endif()
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
-SET(CXX_WARNINGS -Wall -Werror -Wextra)
-
-SET(EXTRA_CXX_FLAGS)
-if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 4.9)
-  LIST(APPEND EXTRA_CXX_FLAGS -std=c++1y)
-elseif(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 4.8)
-  LIST(APPEND EXTRA_CXX_FLAGS -std=c++11)
-endif()
-
-string(TOLOWER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_lower)
-if(CMAKE_BUILD_TYPE_lower STREQUAL "debug")
-  LIST(APPEND EXTRA_CXX_FLAGS -g -O0)
-endif()
-
-if(DOCOV)
-  LIST(APPEND EXTRA_CXX_FLAGS --coverage)
-endif()
-
-string(REPLACE ";" " " STR_EXTRA_CXX_FLAGS "${EXTRA_CXX_FLAGS}")
-string(REPLACE ";" " " STR_CXX_WARNINGS "${CXX_WARNINGS}")
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${STR_EXTRA_CXX_FLAGS} ${STR_CXX_WARNINGS}")
-
 if(DOTEST)
   add_executable(linedoc_tests tests.cxx)
 
-  if(DOCOV)
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CodeCoverage.cmake)
-    set(COVERAGE_EXCLUDES '5*' '*.cxx')
-    setup_target_for_coverage(NAME linedoc_coverage EXECUTABLE linedoc_tests DEPENDENCIES linedoc_tests)
-  endif()
-
   install(TARGETS linedoc_tests DESTINATION test)
   add_test(NAME linedoc_tests COMMAND linedoc_tests)
-
 endif()
 
 file(GLOB HEADERS linedoc/*.hxx)
@@ -71,3 +38,16 @@ install(FILES ${HEADERS} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/linedoc)
 
 add_executable(dump-doc dump-doc.cxx)
 install(TARGETS dump-doc DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+
+configure_file(cmake/setup.sh.in
+  "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.sh" @ONLY)
+install(FILES
+  "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.sh" DESTINATION
+  ${CMAKE_INSTALL_PREFIX})
+
+install(FILES
+  ${CMAKE_SOURCE_DIR}/cmake/linedocConfig.cmake DESTINATION
+  ${CMAKE_INSTALL_PREFIX}/cmake)
+
+FILE(WRITE ${CMAKE_INSTALL_PREFIX}/cmake/linedocVersion.cmake 
+  "SET(linedoc_VERSION ${linedoc_VERSION})\n" )
