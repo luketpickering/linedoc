@@ -3,8 +3,8 @@
 set(linedoc_VERSION @PROJECT_VERSION@)
 
 include(${CMAKE_CURRENT_LIST_DIR}/linedocTargets.cmake)
-if(NOT TARGET linedoc::include)
-  cmessage(WARNING "Expected to find target linedoc::include in ${CMAKE_CURRENT_LIST_DIR}/linedocTargets.cmake")
+if(NOT TARGET linedoc::includes)
+  cmessage(WARNING "Expected to find target linedoc::includes in ${CMAKE_CURRENT_LIST_DIR}/linedocTargets.cmake")
   set(linedoc_FOUND FALSE)
   return()
 endif()
