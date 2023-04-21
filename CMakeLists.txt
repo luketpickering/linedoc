@@ -26,7 +26,7 @@ install(FILES ${HEADERS} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/linedoc)
 
 add_library(linedoc_includes INTERFACE)
 target_include_directories(linedoc_includes INTERFACE 
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:include>)
 set_target_properties(linedoc_includes PROPERTIES EXPORT_NAME linedoc::includes)
 
