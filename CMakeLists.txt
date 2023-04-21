@@ -1,7 +1,6 @@
 cmake_minimum_required (VERSION 3.14)
 
-project(linedoc)
-set(linedoc_VERSION 0.9)
+project(linedoc VERSION 0.9 LANGUAGES CXX)
 
 if(NOT DEFINED CMAKE_INSTALL_PREFIX OR 
     "${CMAKE_INSTALL_PREFIX}x" STREQUAL "x" OR 
@@ -16,38 +15,57 @@ endif()
 
 set(CMAKE_CXX_STANDARD 14)
 
-if(NOT DEFINED DOTEST)
-  SET(DOTEST FALSE)
-endif()
+option(DOTEST "Whether to run tests" OFF)
 
 if(DOTEST)
   enable_testing()
 endif()
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+file(GLOB HEADERS linedoc/*.hxx)
+install(FILES ${HEADERS} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/linedoc)
+
+add_library(linedoc_includes INTERFACE)
+target_include_directories(linedoc_includes INTERFACE 
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+  $<INSTALL_INTERFACE:include>)
+set_target_properties(linedoc_includes PROPERTIES EXPORT_NAME linedoc::includes)
+
+install(TARGETS linedoc_includes EXPORT linedocTargets)
+
+add_library(linedoc::includes ALIAS linedoc_includes)
 
 if(DOTEST)
   add_executable(linedoc_tests tests.cxx)
+  target_link_libraries(linedoc_tests PRIVATE linedoc_includes)
 
   install(TARGETS linedoc_tests DESTINATION test)
   add_test(NAME linedoc_tests COMMAND linedoc_tests)
 endif()
 
-file(GLOB HEADERS linedoc/*.hxx)
-install(FILES ${HEADERS} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/linedoc)
-
 add_executable(dump-doc dump-doc.cxx)
+target_link_libraries(dump-doc PRIVATE linedoc_includes)
 install(TARGETS dump-doc DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 
-configure_file(cmake/setup.sh.in
-  "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.sh" @ONLY)
-install(FILES
-  "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.sh" DESTINATION
-  ${CMAKE_INSTALL_PREFIX})
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+    "${PROJECT_BINARY_DIR}/linedocConfigVersion.cmake"
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY AnyNewerVersion
+)
+configure_package_config_file(
+  "${CMAKE_CURRENT_LIST_DIR}/cmake/Templates/linedocConfig.cmake.in"
+  "${PROJECT_BINARY_DIR}/linedocConfig.cmake"
+  INSTALL_DESTINATION cmake
+  NO_SET_AND_CHECK_MACRO
+  NO_CHECK_REQUIRED_COMPONENTS_MACRO
+)
 
-install(FILES
-  ${CMAKE_SOURCE_DIR}/cmake/linedocConfig.cmake DESTINATION
-  ${CMAKE_INSTALL_PREFIX}/cmake)
+install(EXPORT linedocTargets
+        DESTINATION lib/cmake/linedoc )
 
-FILE(WRITE ${CMAKE_INSTALL_PREFIX}/cmake/linedocVersion.cmake 
-  "SET(linedoc_VERSION ${linedoc_VERSION})\n" )
+install(FILES "${PROJECT_BINARY_DIR}/linedocConfigVersion.cmake"
+              "${PROJECT_BINARY_DIR}/linedocConfig.cmake"
+        DESTINATION lib/cmake/linedoc)
+
+configure_file(${CMAKE_CURRENT_LIST_DIR}/cmake/Templates/setup.linedoc.sh.in ${PROJECT_BINARY_DIR}/setup.linedoc.sh @ONLY)
+install(PROGRAMS ${PROJECT_BINARY_DIR}/setup.linedoc.sh DESTINATION bin)
