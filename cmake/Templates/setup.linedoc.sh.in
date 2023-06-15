@@ -52,5 +52,6 @@ function add_to_PATH () {
 fi
 
 export linedoc_ROOT="@CMAKE_INSTALL_PREFIX@"
+export linedoc_VERSION="@PROJECT_VERSION@"
 
 add_to_PATH "${linedoc_ROOT}/bin"
